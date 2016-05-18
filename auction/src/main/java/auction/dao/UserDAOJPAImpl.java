@@ -1,18 +1,16 @@
 package auction.dao;
 
 import auction.domain.User;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
 
 public class UserDAOJPAImpl implements UserDAO {
-    
+
     private final EntityManager em;
-    private HashMap<String, User> users;
 
     public UserDAOJPAImpl(EntityManager em) {
         this.em = em;
@@ -26,10 +24,18 @@ public class UserDAOJPAImpl implements UserDAO {
 
     @Override
     public void create(User user) {
-         if (findByEmail(user.getEmail()) != null) {
+        if (findByEmail(user.getEmail()) != null) {
             throw new EntityExistsException();
         }
-        em.persist(user);
+
+        em.getTransaction().begin();
+        try {
+            em.persist(user);
+            em.getTransaction().commit();
+        }
+        catch (Exception e) {
+            em.getTransaction().rollback();
+        }
     }
 
     @Override
@@ -37,9 +43,15 @@ public class UserDAOJPAImpl implements UserDAO {
         if (findByEmail(user.getEmail()) == null) {
             throw new IllegalArgumentException();
         }
-        em.merge(user);
+        em.getTransaction().begin();
+        try {
+            em.merge(user);
+            em.getTransaction().commit();
+        }
+        catch (Exception e) {
+            em.getTransaction().rollback();
+        }
     }
-
 
     @Override
     public List<User> findAll() {
@@ -51,12 +63,25 @@ public class UserDAOJPAImpl implements UserDAO {
     @Override
     public User findByEmail(String email) {
         Query q = em.createNamedQuery("User.findByEmail", User.class);
-        q.setParameter("email", email);
-        return (User) q.getSingleResult();
+        q.setParameter("userEmail", email);
+        try {
+            User user = (User) q.getSingleResult();
+            return user;
+        }
+        catch (NoResultException ex) {
+            return null;
+        }
     }
 
     @Override
     public void remove(User user) {
-        em.remove(em.merge(user));
+        em.getTransaction().begin();
+        try {
+            em.remove(em.merge(user));
+            em.getTransaction().commit();
+        }
+        catch (Exception e) {
+            em.getTransaction().rollback();
+        }
     }
 }

@@ -1,26 +1,22 @@
 package auction.domain;
+import java.io.Serializable;
+import javax.persistence.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-
-// opdr 1 annoteren 
-
-
+@Entity
 @NamedQueries({
-    @NamedQuery(name = "User.findByEmail", query = "select a from USERS as a WHERE a.email = :email"),
-    @NamedQuery(name="User.count", query = "select COUNT(*) from USERS as a")
+    @NamedQuery(name = "User.getAll", query = "select u from User as u"),
+    @NamedQuery(name = "User.count", query = "select count(u) from User as u"),
+    @NamedQuery(name = "User.findByEmail", query = "select u from User as u where u.email = :userEmail")
 })
-@Entity  @Table(name="USERS")
-public class User {
+public class User implements Serializable {
 
-    @Id  @GeneratedValue
-    private Long id;
+    @Id
     private String email;
 
+    public User() {
+        
+    }
+    
     public User(String email) {
         this.email = email;
 

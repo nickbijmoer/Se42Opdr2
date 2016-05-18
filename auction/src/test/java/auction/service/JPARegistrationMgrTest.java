@@ -6,9 +6,12 @@ import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
-import util.DatabaseCleaner;
 
 import auction.domain.User;
+import auction.service.RegistrationMgr;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 public class JPARegistrationMgrTest {
 
@@ -16,9 +19,10 @@ public class JPARegistrationMgrTest {
 
     @Before
     public void setUp() throws Exception {
-        registrationMgr = new RegistrationMgr();
-        DatabaseCleaner dbcn = new DatabaseCleaner(registrationMgr.em);
-        dbcn.clean();
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("nl.fhict.se42_auction_jar_1.0-SNAPSHOTPU");
+        EntityManager em = emf.createEntityManager();
+        registrationMgr = new RegistrationMgr(em);
+
     }
 
     @Test
@@ -51,6 +55,9 @@ public class JPARegistrationMgrTest {
         User user1 = registrationMgr.registerUser("xxx8@yyy");
         users = registrationMgr.getUsers();
         assertEquals(1, users.size());
+        System.out.println("-----------------------");
+        System.out.println(user1 + " " + user1.getClass().getName());
+        System.out.println(users.get(0) + " " + users.get(0).getClass().getName());
         assertSame(users.get(0), user1);
 
 

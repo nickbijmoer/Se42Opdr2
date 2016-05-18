@@ -8,6 +8,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import auction.domain.User;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 public class RegistrationMgrTest {
 
@@ -15,7 +18,9 @@ public class RegistrationMgrTest {
 
     @Before
     public void setUp() throws Exception {
-        registrationMgr = new RegistrationMgr();
+         EntityManagerFactory emf = Persistence.createEntityManagerFactory("nl.fhict.se42_auction_jar_1.0-SNAPSHOTPU");
+        EntityManager em = emf.createEntityManager();
+        registrationMgr = new RegistrationMgr(em);
     }
 
     @Test

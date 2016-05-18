@@ -5,38 +5,45 @@ import auction.domain.User;
 import auction.dao.UserDAO;
 import auction.dao.UserDAOJPAImpl;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 public class RegistrationMgr {
 
-    private UserDAO userDAO;
-    private final EntityManagerFactory emf= Persistence.createEntityManagerFactory("nl.fhict.se42_auction_jar_1.0-SNAPSHOTPU");
-    EntityManager em;
-    
-    public RegistrationMgr() {
-        em= emf.createEntityManager();
-        userDAO = new UserDAOJPAImpl(em);
+    private EntityManager em;
+
+    public RegistrationMgr(EntityManager em) {
+        this.em = em;
     }
 
     /**
      * Registreert een gebruiker met het als parameter gegeven e-mailadres, mits
      * zo'n gebruiker nog niet bestaat.
+     *
      * @param email
      * @return Een Userobject dat geïdentificeerd wordt door het gegeven
      * e-mailadres (nieuw aangemaakt of reeds bestaand). Als het e-mailadres
      * onjuist is ( het bevat geen '@'-teken) wordt null teruggegeven.
      */
     public User registerUser(String email) {
+        UserDAO userDAO = new UserDAOJPAImpl(em);
+
         if (!email.contains("@")) {
             return null;
         }
+
         User user = userDAO.findByEmail(email);
-        if (user != null) {
+        
+        if (user != null)
+        {
             return user;
         }
+
         user = new User(email);
-        userDAO.create(user);
+        try {
+            userDAO.create(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return user;
     }
 
@@ -47,13 +54,34 @@ public class RegistrationMgr {
      * e-mailadres of null als zo'n User niet bestaat.
      */
     public User getUser(String email) {
-        return userDAO.findByEmail(email);
+        UserDAOJPAImpl userDAO = new UserDAOJPAImpl(em);
+        User user = null;
+        try
+        {
+            user = userDAO.findByEmail(email);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return user;
     }
 
     /**
      * @return Een iterator over alle geregistreerde gebruikers
      */
     public List<User> getUsers() {
-        return userDAO.findAll();
+        UserDAO userDAO = new UserDAOJPAImpl(em);
+        List<User> users = null;
+        try
+        {
+            users = userDAO.findAll();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            em.getTransaction().rollback();
+        }
+        return users;
     }
 }

@@ -12,6 +12,9 @@ import auction.domain.Category;
 import auction.domain.Item;
 import auction.domain.User;
 import java.util.ArrayList;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 public class AuctionMgrTest {
 
@@ -21,7 +24,9 @@ public class AuctionMgrTest {
 
     @Before
     public void setUp() throws Exception {
-        registrationMgr = new RegistrationMgr();
+         EntityManagerFactory emf = Persistence.createEntityManagerFactory("nl.fhict.se42_auction_jar_1.0-SNAPSHOTPU");
+        EntityManager em = emf.createEntityManager();
+        registrationMgr = new RegistrationMgr(em);
         auctionMgr = new AuctionMgr();
         sellerMgr = new SellerMgr();
     }
