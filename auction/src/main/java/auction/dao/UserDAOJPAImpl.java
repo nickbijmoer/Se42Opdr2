@@ -21,8 +21,7 @@ public class UserDAOJPAImpl implements UserDAO {
 
     @Override
     public int count() {
-        return (Integer) users.createNativeQuery("SELECT count(1) FROM TableA")
-                .getSingleResult();  
+        return (Integer) users.createNativeQuery("SELECT count(1) FROM TableA").getSingleResult();  
     }
 
     @Override
@@ -58,4 +57,9 @@ public class UserDAOJPAImpl implements UserDAO {
     public void remove(User user) {
         users.remove(user.getEmail());
     }
+    
+    
+    
+    
+    
 }

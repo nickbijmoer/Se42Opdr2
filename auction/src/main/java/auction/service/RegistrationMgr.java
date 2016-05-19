@@ -51,4 +51,8 @@ public class RegistrationMgr {
     public List<User> getUsers() {
         return userDAO.findAll();
     }
+    
+    
+    
+    
 }
