@@ -2,3 +2,5 @@
 *.xml
 
 *.class
+
+auction/target/classes/.netbeans_automatic_build

@@ -18,9 +18,8 @@ public class RegistrationMgrTest {
 
     @Before
     public void setUp() throws Exception {
-         EntityManagerFactory emf = Persistence.createEntityManagerFactory("nl.fhict.se42_auction_jar_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
-        registrationMgr = new RegistrationMgr(em);
+       
+        registrationMgr = new RegistrationMgr();
     }
 
     @Test
